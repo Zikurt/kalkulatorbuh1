@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buhrnd - Профессиональное бухгалтерское сопровождение</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(rgba(93, 64, 55, 0.92), rgba(93, 64, 55, 0.92)), 
+                        url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #f5f0eb;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            padding: 30px;
+            border-radius: 18px;
+            background-color: rgba(255, 253, 250, 0.97);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #8c6b54, #5d4037, #a1887f);
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #5d4037;
+        }
+        
+        h1 {
+            font-size: clamp(32px, 5vw, 42px);
+            line-height: 1.2;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #5d4037, #8c6b54);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(140, 107, 84, 0.15);
+        }
+        
+        h2 {
+            font-size: clamp(24px, 4vw, 28px);
+            position: relative;
+            padding-bottom: 12px;
+            margin-top: 30px;
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #8c6b54, #5d4037);
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            font-size: clamp(18px, 3vw, 22px);
+            color: #7a5a4a;
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .content {
+            text-align: left;
+            color: #3a2e25;
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.65;
+            margin-bottom: 25px;
+        }
+        
+        .content p {
+            margin-bottom: 15px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .feature-item {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #a1887f;
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(93, 64, 55, 0.25);
+        }
+        
+        .feature-item h3 {
+            font-size: clamp(17px, 3vw, 19px);
+            margin-bottom: 12px;
+            color: #5d4037;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-item h3::before {
+            content: "✓";
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            background: #f5f0eb;
+            border-radius: 50%;
+            color: #5d4037;
+            text-align: center;
+            line-height: 26px;
+            margin-right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .feature-item p {
+            font-size: clamp(15px, 3vw, 16px);
+            color: #333;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        
+        /* Яркая и заметная кнопка калькулятора */
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: clamp(18px, 3vw, 20px);
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+            border: 2px solid #fff;
+            animation: pulse 2s infinite;
+        }
+        
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #d35400 0%, #b34700 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.6);
+        }
+        
+        .cta-button:hover::after {
+            opacity: 1;
+        }
+        
+        .cta-button:active {
+            transform: translateY(1px);
+        }
+        
+        .logo {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            color: #f5f0eb;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .logo-icon {
+            background: #f5f0eb;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5d4037;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* РАЗДЕЛ "О НАС" - ИСПРАВЛЕННЫЙ ЦВЕТ ТЕКСТА */
+        .about-section {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 6px 18px rgba(93, 64, 55, 0.12);
+        }
+        
+        .about-content {
+            text-align: left;
+        }
+        
+        .about-content p {
+            /* Исправленный цвет текста - темно-коричневый */
+            color: #3a2e25;
+            font-size: clamp(16px, 3vw, 17px);
+            line-height: 1.65;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        /* Раздел "Контакты" */
+        .contacts-section {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 6px 18px rgba(93, 64, 55, 0.12);
+        }
+        
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 25px;
+        }
+        
+        .contact-card {
+            background: #f8f4f0;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(140, 107, 84, 0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #e8dfd8;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(140, 107, 84, 0.2);
+        }
+        
+        .contact-icon {
+            font-size: 32px;
+            color: #5d4037;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            font-size: 16px;
+            color: #3a2e25;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .contact-link {
+            color: #5d4037;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s;
+            display: block;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        
+        .contact-link:hover {
+            color: #8c6b54;
+            text-decoration: underline;
+        }
+        
+        .contact-card p {
+            color: #5d4037;
+            font-size: clamp(14px, 3vw, 15px);
+            margin-top: 12px;
+            font-weight: 500;
+        }
+        
+        /* Навигация - кнопка "Главная" активна без действия */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            color: #f5f0eb;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(93, 64, 55, 0.8);
+            border: 2px solid transparent;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-link:hover {
+            background: rgba(140, 107, 84, 0.95);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 253, 250, 0.95);
+            color: #5d4037;
+            border: 2px solid #5d4037;
+            font-weight: 700;
+            cursor: default; /* Курсор по умолчанию */
+        }
+        
+        .nav-link.active:hover {
+            transform: none; /* Убираем трансформацию при наведении */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Оставляем обычную тень */
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: rgba(245, 240, 235, 0.95);
+            font-size: 14px;
+            text-align: center;
+            max-width: 800px;
+            padding: 15px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+        
+        .calculator-button {
+            margin: 25px 0 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .contact-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px 15px;
+                border-radius: 16px;
+            }
+            
+            .logo-text {
+                font-size: 24px;
+            }
+            
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .nav-link {
+                padding: 8px 15px;
+                font-size: 15px;
+            }
+            
+            .about-section, .contacts-section {
+                padding: 20px 15px;
+            }
+            
+            .feature-item {
+                padding: 18px;
+            }
+            
+            .contact-card {
+                padding: 18px;
+            }
+        }
+        
+        /* Анимация текста */
+        .animate-text {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+        
+        .delay-4 {
+            animation-delay: 0.8s;
+        }
+        
+        .delay-5 {
+            animation-delay: 1s;
+        }
+        
+        .delay-6 {
+            animation-delay: 1.2s;
+        }
+        
+        .delay-7 {
+            animation-delay: 1.4s;
+        }
+        
+        /* Анимация кнопки */
+        @keyframes pulse {
+            0% { 
+                transform: scale(1); 
+                box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+            }
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 0 8px 20px rgba(230, 126, 34, 0.6);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+            }
+        }
+        
+        /* Анимация логотипа */
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo floating">
+        <div class="logo-icon">B</div>
+        <div class="logo-text">Buhrnd</div>
+    </div>
+    
+    <div class="navigation">
+        <a href="#" class="nav-link active">Главная</a>
+        <a href="#about" class="nav-link">О нас</a>
+        <a href="#contacts" class="nav-link">Контакты</a>
+    </div>
+    
+    <div class="container">
+        <h1 class="animate-text">Бухгалтерия - это не просто цифры, это язык Вашего бизнеса</h1>
+        
+        <div class="subtitle animate-text delay-1">Рассчитайте стоимость бухгалтерского обслуживания за 1 минуту</div>
+        
+        <div class="content animate-text delay-2">
+            <p>Наша команда специализируется на бухгалтерском сопровождении ИП на УСН (доходы) и патенте.</p>
+            <p>Легально оптимизируем налоговую нагрузку и гарантируем своевременную сдачу отчетности.</p>
+            <p>Работаем прозрачно: Вы всегда можете дистанционно контролировать процесс и быть уверены, что:</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature-item animate-text delay-3">
+                <h3>Все отчеты сдаются точно в срок</h3>
+                <p>Никаких просрочек и штрафов - мы строго соблюдаем все сроки сдачи отчетности</p>
+            </div>
+            <div class="feature-item animate-text delay-4">
+                <h3>Каждая цифра обоснована и проверена</h3>
+                <p>Наша тройная проверка гарантирует точность всех расчетов и данных</p>
+            </div>
+        </div>
+        
+        <div class="content animate-text delay-5">
+            <p>Наши клиенты знают, за что платят: мы готовы детально объяснить любую операцию и цифру.</p>
+        </div>
+        
+        <!-- Яркая и заметная кнопка калькулятора -->
+        <div class="calculator-button">
+            <a href="calculator.html" class="cta-button animate-text">
+                <i class="fas fa-calculator"></i> Рассчитать стоимость за 1 минуту
+            </a>
+        </div>
+        
+        <!-- Раздел "О нас" - с исправленным цветом текста -->
+        <div id="about" class="about-section animate-text delay-6">
+            <h2>О нас</h2>
+            <div class="about-content">
+                <p>Мы — команда профессиональных бухгалтеров, специализирующаяся исключительно на малом бизнесе: индивидуальных предпринимателях (ИП) и обществах с ограниченной ответственностью (ООО).</p>
+                <p>Мы не просто работаем с цифрами - мы говорим на вашем языке, понимаем специфику малого бизнеса и решаем реальные задачи, с которыми вы сталкиваетесь ежедневно.</p>
+                <p>Наш подход отличается от других: мы не прячемся за сложными формулировками из Налогового Кодекса РФ, а объясняем все простыми и понятными словами.</p>
+                <p>Мы работаем удалённо по всей России, предоставляя полную онлайн-отчётность. Все документы всегда доступны в вашем личном кабинете 24/7. Наша команда состоит из высококвалифицированных специалистов с многолетним опытом работы в сфере бухгалтерии и налогообложения.</p>
+                <p>Мы гордимся тем, что помогаем малому бизнесу развиваться, освобождая предпринимателей от рутинных бухгалтерских задач и позволяя им сосредоточиться на развитии своего дела.</p>
+            </div>
+        </div>
+        
+        <!-- Раздел "Контакты" -->
+        <div id="contacts" class="contacts-section animate-text delay-7">
+            <h2>Контакты</h2>
+            <p class="content">Свяжитесь с нами любым удобным способом. Мы готовы ответить на ваши вопросы и предложить оптимальное решение для вашего бизнеса.</p>
+            
+            <div class="contact-cards">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Электронная почта</h3>
+                    <div class="contact-info">
+                        <a href="mailto:buhrnd_1@mail.ru" class="contact-link">buhrnd_1@mail.ru</a>
+                    </div>
+                    <p>Отправьте нам письмо, и мы ответим в течение рабочего дня</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Телефон</h3>
+                    <div class="contact-info">
+                        <a href="tel:+79885840550" class="contact-link">+7 (988) 584-05-50</a>
+                    </div>
+                    <p>Звоните с 9:00 до 18:00 в рабочие дни</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Онлайн-консультация</h3>
+                    <div class="contact-info">
+                        <!-- Рабочие ссылки на Telegram и WhatsApp -->
+                        <a href="https://t.me/buh100824" class="contact-link">Telegram</a>
+                        <a href="https://wa.me/79885840550" class="contact-link">WhatsApp</a>
+                    </div>
+                    <p>Быстрые ответы на ваши вопросы</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        © 2025 Профессиональное бухгалтерское сопровождение Buhrnd. Все права защищены.
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Плавная прокрутка при клике по навигации
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Для активной ссылки "Главная" отключаем действие
+                    if (this.classList.contains('active')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    if (this.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Обновляем активную ссылку
+                            document.querySelectorAll('.nav-link').forEach(link => {
+                                link.classList.remove('active');
+                            });
+                            this.classList.add('active');
+                        }
+                    }
+                });
+            });
+            
+            // Анимация при прокрутке
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.animate-text');
+                
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementTop < windowHeight - 80) {
+                        element.style.animationPlayState = 'running';
+                    }
+                });
+            };
+            
+            // Инициализация анимации
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll();
+        });
+    </script>
+</body>
+</html>

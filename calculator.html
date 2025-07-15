@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор стоимости бухгалтерского обслуживания | Профессиональные услуги</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <style>
+        /* Базовые стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            background-color: #f5f0eb;
+            background-image: linear-gradient(to bottom, #f5f0eb 0%, #e8e0d9 100%);
+            color: #4a3f35;
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, .form-group-title, .total-label, .calculate-btn, .submit-btn, .total-price {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .calculator-container {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 12px;
+            background-color: #fffdfa;
+            box-shadow: 0 6px 20px rgba(93, 64, 55, 0.12);
+            border: 1px solid #e6ded6;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e6ded6;
+        }
+        
+        .header-section h1 {
+            color: #5d4037;
+            font-size: clamp(24px, 5vw, 32px);
+            margin-bottom: 10px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        .header-section p {
+            color: #8c6b54;
+            font-size: clamp(16px, 3vw, 18px);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            padding: 20px;
+            background-color: #fdfaf6;
+            border-radius: 10px;
+            border-left: 4px solid #a1887f;
+            box-shadow: 0 2px 6px rgba(140, 107, 84, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group.unfilled {
+            border-left-color: #d32f2f;
+            background-color: #fff8f8;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.2); }
+            70% { box-shadow: 0 0 0 8px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+        }
+        
+        .form-group-title {
+            font-size: clamp(18px, 4vw, 20px);
+            font-weight: 600;
+            color: #5d4037;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group-title::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #a1887f;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #5d4037;
+            font-size: clamp(15px, 3vw, 16px);
+        }
+        
+        .required::after {
+            content: " *";
+            color: #d32f2f;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f9f6f3;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        
+        .radio-option:hover {
+            border-color: #a1887f;
+            background-color: #f5f0eb;
+            transform: translateY(-2px);
+        }
+        
+        .radio-option input {
+            margin-right: 12px;
+            min-width: 18px;
+            min-height: 18px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .number-input {
+            width: 100px;
+            padding: 12px;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: #5d4037;
+            background: #f9f6f3;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        
+        .number-input::-webkit-outer-spin-button,
+        .number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .number-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .number-btn {
+            width: 38px;
+            height: 26px;
+            background: #e8e0d9;
+            border: 1px solid #d7ccc8;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #5d4037;
+            transition: background 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .number-btn:hover {
+            background: #d7ccc8;
+        }
+        
+        input[type="text"], 
+        input[type="tel"], 
+        textarea, 
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            font-size: clamp(15px, 3vw, 17px);
+            margin-top: 8px;
+            transition: border 0.3s;
+            background: #f9f6f3;
+            color: #5d4037;
+            font-family: 'Roboto', sans-serif;
+            -webkit-appearance: none;
+        }
+        
+        input[type="text"]:focus, 
+        input[type="tel"]:focus, 
+        textarea:focus, 
+        select:focus {
+            border-color: #8c6b54;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(140, 107, 84, 0.2);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .total-section {
+            background: linear-gradient(135deg, #8c6b54 0%, #5d4037 100%);
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 10px;
+            color: #fffdfa;
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.15);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .total-section.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .total-label {
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .total-price {
+            font-size: clamp(28px, 6vw, 38px);
+            font-weight: 700;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #a1887f 0%, #8c6b54 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: clamp(17px, 4vw, 20px);
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin: 25px 0 15px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(140, 107, 84, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(140, 107, 84, 0.25);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #5d4037 0%, #4a3f35 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: clamp(17px, 4vw, 20px);
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(93, 64, 55, 0.25);
+        }
+        
+        .form-note {
+            text-align: center;
+            margin-top: 20px;
+            color: #8c6b54;
+            font-size: clamp(14px, 3vw, 16px);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        
+        .required-info {
+            text-align: right;
+            font-size: clamp(13px, 3vw, 15px);
+            color: #8c6b54;
+            margin-top: 12px;
+            font-style: italic;
+        }
+        
+        .problem-description {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .marketplace-section {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d7ccc8, transparent);
+            margin: 25px 0;
+        }
+        
+        /* Стили для блока соглашений */
+        .consent-section {
+            margin-bottom: 22px;
+            padding: 20px;
+            background-color: #fdfaf6;
+            border-radius: 10px;
+            border-left: 4px solid #8c6b54;
+            box-shadow: 0 2px 6px rgba(140, 107, 84, 0.06);
+        }
+        
+        .consent-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background: #f9f6f3;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .consent-item:hover {
+            border-color: #a1887f;
+            background-color: #f5f0eb;
+            transform: translateY(-2px);
+        }
+        
+        .consent-checkbox {
+            margin-right: 12px;
+            min-width: 20px;
+            min-height: 20px;
+            margin-top: 3px;
+        }
+        
+        .consent-link {
+            color: #5d4037;
+            text-decoration: underline;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .consent-link:hover {
+            color: #8c6b54;
+            text-decoration: none;
+        }
+        
+        /* Стили для модальных окон */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal-content {
+            background-color: #fffdfa;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #d7ccc8;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e6ded6;
+        }
+        
+        .modal-title {
+            font-size: clamp(20px, 4vw, 24px);
+            color: #5d4037;
+            font-weight: 700;
+        }
+        
+        .close {
+            color: #8c6b54;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: #5d4037;
+        }
+        
+        .modal-body {
+            padding: 15px 0;
+            color: #4a3f35;
+            line-height: 1.6;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        
+        .modal-body h3 {
+            margin: 20px 0 10px;
+            color: #5d4037;
+            font-size: clamp(16px, 3vw, 18px);
+        }
+        
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+        
+        .modal-body ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+        
+        /* Мобильная оптимизация */
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 20px 15px;
+                margin: 10px auto;
+            }
+            
+            .form-group {
+                padding: 16px;
+            }
+            
+            .radio-option {
+                padding: 10px 12px;
+            }
+            
+            .input-group {
+                gap: 12px;
+            }
+            
+            .number-input {
+                width: 90px;
+                padding: 10px;
+                font-size: 17px;
+            }
+            
+            .number-btn {
+                width: 35px;
+                height: 24px;
+                font-size: 15px;
+            }
+            
+            input[type="text"], 
+            input[type="tel"], 
+            textarea, 
+            select {
+                padding: 12px 14px;
+            }
+            
+            .total-section {
+                padding: 20px;
+            }
+            
+            .calculate-btn, .submit-btn {
+                padding: 14px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 15px 12px;
+            }
+            
+            .header-section {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            
+            .form-group {
+                padding: 14px 12px;
+            }
+            
+            .radio-option {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            
+            .number-input {
+                width: 80px;
+                padding: 9px;
+                font-size: 16px;
+            }
+            
+            .number-btn {
+                width: 32px;
+                height: 22px;
+            }
+            
+            input[type="text"], 
+            input[type="tel"], 
+            textarea, 
+            select {
+                padding: 11px 13px;
+                font-size: 15px;
+            }
+            
+            textarea {
+                min-height: 90px;
+            }
+            
+            .consent-item {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .modal-content {
+                padding: 15px;
+                width: 95%;
+            }
+        }
+        
+        /* Десктоп оптимизация */
+        @media (min-width: 1024px) {
+            .calculator-container {
+                padding: 35px 40px;
+            }
+            
+            .header-section {
+                padding-bottom: 30px;
+            }
+            
+            .form-group {
+                padding: 28px 30px;
+            }
+        }
+        
+        /* Анимации и улучшения UX */
+        .radio-option, .calculate-btn, .submit-btn, .number-btn {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        
+        /* Лоадер для кнопки */
+        .loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Новые стили */
+        .hidden {
+            display: none;
+        }
+        
+        .contact-section {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+            margin-top: 25px; /* Добавлен отступ сверху */
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Отступ для кнопки "Оставить заявку" */
+        .request-btn-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header-section">
+            <h1>Индивидуальный расчет тарифа</h1>
+            <p>Рассчитайте приблизительную стоимость профессионального бухгалтерского сопровождения для вашего бизнеса за 1 минуту</p>
+        </div>
+        
+        <form id="calculatorForm" novalidate>
+            <!-- Блок с правовой формой -->
+            <div class="form-group">
+                <div class="form-group-title">Правовая форма</div>
+                <label class="required">Выберите правовую форму вашего бизнеса:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="legalForm" value="ip" checked> 
+                        Индивидуальный предприниматель (ИП)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="legalForm" value="ooo"> 
+                        Общество с ограниченной ответственностью (ООО)
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Периодичность обслуживания</div>
+                <label class="required">Выберите периодичность бухгалтерского сопровождения:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="serviceType" value="monthly" checked> 
+                        Ежемесячное обслуживание (расчет налога, сдача налоговой отчетности, кадровый учет, работа с первичными документами и прочие услуги)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="serviceType" value="quarterly"> 
+                        Ежеквартальное обслуживание (расчет налога и сдача налоговой отчетности)
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Система налогообложения</div>
+                <label class="required">Укажите применяемую систему налогообложения:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="taxMode" value="usn" checked> 
+                        УСН (доходы)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="taxMode" value="patent"> 
+                        Патент
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Кадровый учет</div>
+                <label class="required">Количество сотрудников в штате:</label>
+                <div class="input-group">
+                    <div class="number-controls">
+                        <button type="button" class="number-btn" id="employees-increment">▲</button>
+                        <button type="button" class="number-btn" id="employees-decrement">▼</button>
+                    </div>
+                    <input type="number" id="employees-count" class="number-input" name="employeesCount" min="0" value="0" required>
+                </div>
+            </div>
+
+            <div class="form-group" id="documentsWorkGroup">
+                <div class="form-group-title">Документооборот</div>
+                <label class="required">Объем первичных документов в месяц:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <!-- ИЗМЕНЕНИЕ: добавлен атрибут checked для первого варианта -->
+                        <input type="radio" name="documentsWork" value="0" required checked> 
+                        Нет работы с документами
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="documentsWork" value="10" required> 
+                        До 10 документов в месяц
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="documentsWork" value="30" required> 
+                        До 30 документов в месяц
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="documentsWork" value="50" required> 
+                        До 50 документов в месяц
+                    </label>
+                </div>
+            </div>
+
+            <!-- Блок с маркетплейсами -->
+            <div class="form-group">
+                <div class="form-group-title">Работа с маркетплейсами</div>
+                <label class="required">Вы продаете на маркетплейсах?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="marketplace" value="no" checked> 
+                        Нет, не продаю
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="marketplace" value="yes"> 
+                        Да, продаю на маркетплейсах
+                    </label>
+                </div>
+                
+                <div class="marketplace-section" id="marketplaceSection">
+                    <label class="required">Количество маркетплейсов:</label>
+                    <div class="input-group">
+                        <div class="number-controls">
+                            <button type="button" class="number-btn" id="marketplace-increment">▲</button>
+                            <button type="button" class="number-btn" id="marketplace-decrement">▼</button>
+                        </div>
+                        <input type="number" id="marketplace-count" class="number-input" name="marketplaceCount" min="1" value="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Финансовые показатели</div>
+                <label class="required">Среднемесячные обороты компании (руб.):</label>
+                <input type="text" name="monthlyTurnover" placeholder="Укажите сумму в рублях" required>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Текущие проблемы</div>
+                <label class="required">Есть ли проблемы с учетом или блокировкой расчетного счета?</label>
+                <select name="accountingProblems" id="accountingProblems" required>
+                    <option value="">-- Выберите вариант --</option>
+                    <option value="no">Нет, проблем нет</option>
+                    <option value="blocked">Есть блокировка счета</option>
+                    <option value="errors">Есть ошибки в учете</option>
+                    <option value="other">Другая проблема</option>
+                </select>
+                
+                <div class="problem-description" id="problemDescription">
+                    <label class="required">Опишите проблему:</label>
+                    <textarea name="problemDetails" placeholder="Подробно опишите возникшую проблему..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Постановка задач</div>
+                <label class="required">Опишите ваши основные задачи для бухгалтера:</label>
+                <textarea name="tasksDescription" placeholder="Ведение учета, расчет зарплаты, сдача отчетности, консультации и т.д." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group-title">Информация о компании</div>
+                <label class="required">Основной вид деятельности:</label>
+                <input type="text" name="businessType" placeholder="Розничная торговля, услуги, производство и т.д." required>
+            </div>
+
+            <button type="button" id="calculateBtn" class="calculate-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                Произвести расчет стоимости
+            </button>
+            
+            <div class="divider"></div>
+
+            <div id="total-section" class="total-section">
+                <div id="total-label" class="total-label">Стоимость бухгалтерского обслуживания за месяц:</div>
+                <div id="total-price" class="total-price">0 руб.</div>
+            </div>
+
+            <input type="hidden" id="total-cost" name="totalCost" value="0">
+			
+			<div class="divider"></div>
+			
+            <!-- Кнопка для открытия контактных данных (ВИДИМАЯ ИЗНАЧАЛЬНО) -->
+            <div class="request-btn-container">
+                <button type="button" id="showContactBtn" class="submit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"></path>
+                        <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
+                    </svg>
+                    Оставить заявку на обслуживание
+                </button>
+            </div>
+            
+            <!-- Контактные данные (СКРЫТЫ ИЗНАЧАЛЬНО) -->
+            <div id="contactSection" class="contact-section" style="display: none;">
+                <div class="form-group">
+                    <div class="form-group-title">Контактные данные</div>
+                    <label class="required">Контактный телефон:</label>
+                    <input type="tel" id="phoneInput" name="phone" placeholder="+7 (XXX) XXX-XX-XX" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-group-title">Ваши данные</div>
+                    <label class="required">Ваше имя:</label>
+                    <input type="text" name="name" placeholder="Имя" required>
+                </div>
+
+                <!-- Блок соглашений -->
+                <div class="form-group consent-section">
+                    <div class="form-group-title">Согласие на обработку данных</div>
+                    <label class="required">Для отправки заявки необходимо ознакомиться и согласиться со следующими документами:</label>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" class="consent-checkbox" id="consent1" required>
+                        <div>
+                            <label for="consent1">
+                                Я ознакомлен(а) и согласен(на) с 
+                                <span class="consent-link" data-modal="consentModal1">Согласием на обработку персональных данных</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" class="consent-checkbox" id="consent2" required>
+                        <div>
+                            <label for="consent2">
+                                Я ознакомлен(а) и согласен(на) с 
+                                <span class="consent-link" data-modal="consentModal2">Согласием на получение рекламных рассылок</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" class="consent-checkbox" id="consent3" required>
+                        <div>
+                            <label for="consent3">
+                                Я ознакомлен(а) и согласен(на) с 
+                                <span class="consent-link" data-modal="consentModal3">Политикой конфиденциальности</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="required-info">* Поля, обязательные для заполнения</div>
+                
+                <button type="submit" class="submit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"></path>
+                        <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
+                    </svg>
+                    Отправить заявку на обслуживание
+                </button>
+                
+                <div class="form-note">
+                    После отправки формы с Вами свяжется наш бухгалтер для уточнения деталей и подготовки индивидуального коммерческого предложения
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Модальные окна для документов с исправленными email и ссылками -->
+    <div id="consentModal1" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Согласие на обработку персональных данных</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><strong>Оператор:</strong> ИП Чернышева Екатерина Сергеевна</p>
+                <p><strong>ИНН:</strong> 616208118598</p>
+                <p><strong>ОГРНИП:</strong> 325510000005029</p>
+                
+                <h3>СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ</h3>
+                
+                <p>1. Настоящим свободно, своей волей и в своем интересе даю согласие Оператору, на обработку своих персональных данных смешанным способом в соответствии со следующим перечнем:</p>
+                
+                <ul>
+                    <li>Номер телефона;</li>
+                    <li>ФИО.</li>
+                </ul>
+                
+                <p><strong>для целей:</strong></p>
+                <ul>
+                    <li>установления обратной связи с субъектом обработки персональных данных, включая направление уведомлений и запросов.</li>
+                </ul>
+                
+                <p>2. В целях обеспечения реализации требований законодательства в области обработки персональных данных Оператор может:</p>
+                <ul>
+                    <li>осуществлять обработку персональных данных путем сбора, хранения, систематизации, накопления, изменения, уточнения, использования, передачи, обезличивания, блокирования, уничтожения персональных данных.</li>
+                </ul>
+                
+                <p>3. Настоящее согласие вступает в силу с момента подтверждения путем проставления знака «V» напротив графы «даю согласие на обработку персональных данных» или другой аналогичного содержания на сайте Оператора. Согласие на обработку персональных данных действует до момента его отзыва субъектом.</p>
+                
+                <p>4. Отзыв согласия на обработку персональных данных осуществляется путем направления заявления в письменной форме на электронный адрес Оператора.</p>
+                
+                <p>Я подтверждаю, что мне известно о праве отозвать свое согласие посредством составления соответствующего письменного документа, который может быть направлен мной в адрес Оператора посредством электронной почты на адрес: buhrnd_1@mail.ru</p>
+                
+                <p>В случае моего отзыва согласия на обработку персональных данных Оператор вправе продолжить обработку персональных данных без моего согласия при наличии оснований, указанных в пунктах 2-11 части 1 статьи 6, части 2 статьи 10 и части 2 статьи 11 Федерального закона от 27.07.2006г. №152-ФЗ «О персональных данных».</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="consentModal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Согласие на получение рекламных рассылок</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><strong>Оператор:</strong> ИП Чернышева Екатерина Сергеевна</p>
+                <p><strong>ИНН:</strong> 616208118598</p>
+                <p><strong>ОГРНИП:</strong> 325510000005029</p>
+                
+                <h3>СОГЛАСИЕ НА ПОЛУЧЕНИЕ ИНФОРМАЦИОННЫХ И РЕКЛАМНЫХ РАССЫЛОК</h3>
+                
+                <p>Настоящим Я, субъект персональных данных, во исполнение требований:</p>
+                
+                <ul>
+                    <li>части 1 статьи 18 Федерального закона от 13.03.2006 №38-ФЗ «О рекламе» (далее -- 38-ФЗ),</li>
+                    <li>статьи 9 Федерального закона от 27.07.2006 №152-ФЗ «О персональных данных» (далее -- 152-ФЗ),</li>
+                </ul>
+                
+                <p>проставляя знак «V» напротив графы «даю свое согласие на получение рекламной рассылки» или иной аналогичной по содержанию, расположенной на сайте оператора, свободно, своей волей и в своем интересе даю свое согласие Оператору на направление мне информационных и рекламных рассылок на следующих условиях:</p>
+                
+                <p>1. Оператор вправе осуществлять информационные, рекламные рассылки следующими способами:</p>
+                <ul>
+                    <li>посредством СМС-сообщений (с использованием номера мобильного телефона, указанного в мной на сайте);</li>
+                    <li>по сетям электросвязи, в том числе посредством использования телефонной связи;</li>
+                    <li>в мессенджерах, включая, но не ограничиваясь: WhatsApp, Telegram.</li>
+                </ul>
+                
+                <p>2. Для осуществления информационных, рекламных рассылок Оператор осуществляет обработку следующих персональных данных:</p>
+                <ul>
+                    <li>номер мобильного телефона;</li>
+                    <li>ФИО.</li>
+                </ul>
+                
+                <p>3. Оператором осуществляется смешанная обработка персональных данных.</p>
+                
+                <p>4. Оператор вправе осуществлять обработку моих персональных данных следующими действиями: сбор, запись, систематизация, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, блокирование, удаление, уничтожение.</p>
+                
+                <p>5. Оператор вправе осуществлять передачу моих персональных данных с целью осуществления информационных, рекламных рассылок следующим лицам: операторы связи, мессенджеры.</p>
+                
+                <p>6. Настоящее согласие действует в течение 10-ти лет с даты предоставления.</p>
+                
+                <p>7. Я проинформирован(-а) о праве на получение информации, касающейся обработки моих персональных данных, в соответствии с 152-ФЗ, и уведомлен(-а), что данное согласие может быть отозвано мною в любой момент посредством обращения в письменной форме. Письменный запрос следует направлять по адресу электронной почты: buhrnd_1@mail.ru в этом случае он должен быть подписан простой электронной подписью в соответствии с законодательством Российской Федерации.</p>
+                
+                <p>8. Настоящим я гарантирую, что указанные мною в согласии на обработку персональных данных номер мобильного телефона и адрес электронной почты принадлежат мне. В случае прекращения использования мною номера мобильного телефона и/или адреса электронной почты, указанных в согласии, я обязуюсь проинформировать об этом Оператора. Указывая абонентский номер телефона и/или адрес электронной почты в согласии, принадлежащий третьему лицу, я гарантирую, что получил(а) согласие от указанного третьего лица на получение рекламных рассылок от Оператора в соответствии с настоящим согласием.</p>
+                
+                <p>9. Отказаться от рассылки информационных, рекламных сообщений можно путем направления соответствующего запроса на электронную почту: buhrnd_1@mail.ru</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="consentModal3" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Политика конфиденциальности</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Политика оператора в отношении обработки персональных данных</h3>
+                <p>Редакция от 30.06.2025 г.</p>
+                
+                <h3>1. Общие положения</h3>
+                
+                <p>1.1. Политика оператора в отношении обработки персональных данных (далее - Политика) разработана в целях обеспечения защиты прав и свобод субъекта персональных данных при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.</p>
+                
+                <p>1.2. Основные понятия, используемые в Политике:</p>
+                
+                <ul>
+                    <li><strong>персональные данные</strong> - любая информация, относящаяся к прямо или косвенно определенному или определяемому физическому лицу (субъекту персональных данных);</li>
+                    <li><strong>обработка персональных данных</strong> - любое действие (операция) или совокупность действий (операций), совершаемых с использованием средств автоматизации или без использования таких средств с персональными данными, включая сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передачу (распространение, предоставление, доступ), обезличивание, блокирование, удаление, уничтожение персональных данных;</li>
+                    <li><strong>смешанная обработка персональных данных</strong> -- обработка персональных данных человеком с использованием средств вычислительной техники;</li>
+                    <li><strong>распространение персональных данных</strong> - действия, направленные на раскрытие персональных данных неопределенному кругу лиц;</li>
+                    <li><strong>предоставление персональных данных</strong> - действия, направленные на раскрытие персональных данных определенному лицу или определенному кругу лиц;</li>
+                    <li><strong>блокирование персональных данных</strong> - временное прекращение обработки персональных данных (за исключением случаев, если обработка необходима для уточнения персональных данных);</li>
+                    <li><strong>уничтожение персональных данных</strong> - действия, в результате которых становится невозможным восстановить содержание персональных данных в информационной системе персональных данных и (или) в результате которых уничтожаются материальные носители персональных данных;</li>
+                    <li><strong>обезличивание персональных данных</strong> - действия, в результате которых становится невозможным без использования дополнительной информации определить принадлежность персональных данных конкретному субъекту персональных данных;</li>
+                    <li><strong>оператор персональных данных (оператор)</strong> -- ИП Чернышева Екатерина Сергеевна, ИНН: 616208118598, ОГРНИП: 325510000005029</li>
+                    <li><strong>Сайт -</strong> https://buhrnd1.tb.ru/</li>
+                </ul>
+                
+                <p>1.3. Оператор, получивший доступ к персональным данным, обязан соблюдать конфиденциальность персональных данных - не раскрывать третьим лицам и не распространять персональные данные без согласия субъекта персональных данных, если иное не предусмотрено федеральным законом.</p>
+                
+                <h3>2. Цели сбора персональных данных</h3>
+                
+                <p>2.1. Обработка персональных данных ограничивается достижением конкретных, заранее определенных и законных целей. Не допускается обработка персональных данных, несовместимая с целями сбора персональных данных.</p>
+                
+                <p>2.2. К целям обработки персональных данных оператора относятся:</p>
+                <ul>
+                    <li>установление обратной связи с субъектом обработки персональных данных, включая направление уведомлений и запросов.</li>
+                </ul>
+                
+                <h3>3. Правовые основания обработки персональных данных</h3>
+                
+                <p>3.1. Правовым основанием обработки персональных данных являются:</p>
+                <ul>
+                    <li>согласие на обработку персональных данных.</li>
+                </ul>
+                
+                <p>3.2. Согласие на обработку персональных данных выражается субъектом посредством проставления знака «V» напротив графы «согласен с условиями политики обработки персональных данных» и «выражаю согласие на обработку персональных данных» или иной графы, аналогичной по содержанию на Сайте Оператора.</p>
+                
+                <h3>4. Категории и перечень обрабатываемых персональных данных, категории субъектов персональных данных</h3>
+                
+                <p>4.1. Содержание и объем обрабатываемых персональных данных соответствуют заявленным целям обработки. Обрабатываемые персональные данные не должны быть избыточными по отношению к заявленным целям их обработки.</p>
+                
+                <p>4.2. Категория обрабатываемых персональных данных: общая.</p>
+                
+                <p>4.3. Перечень обрабатываемых персональных данных:</p>
+                <ul>
+                    <li>Номер телефона;</li>
+                    <li>ФИО.</li>
+                </ul>
+                
+                <p>4.3. К категориям субъектов персональных данных относятся:</p>
+                <ul>
+                    <li>Пользователи Сайта;</li>
+                </ul>
+                
+                <p>4.4. В целях получения общей информации о том, как сайт Оператора используется посетителями, Оператор применяет технологии отслеживания (файлы cookie) для сбора таких персональных данных, как тип браузера или операционная система, ссылочная страница, путь на сайте, домен интернет-провайдера и т.п. Файлы cookie позволяют совершенствовать сайт Оператора в соответствии с требованиями его посетителей. Оператор сохраняет всю информацию, собранную с использованием файлов cookie, в формате, не предполагающем идентификацию личности. Информация, полученная через файлы cookie, не может быть передана третьим лицам.</p>
+                
+                <h3>5. Права и обязанности Сторон</h3>
+                
+                <p>5.1. Оператор имеет право:</p>
+                <ul>
+                    <li>Получать от субъекта персональных данных достоверные сведения;</li>
+                    <li>В случае отзыва согласия на обработку персональных данных продолжить их обработку при наличии законных оснований;</li>
+                    <li>Определять перечень мер для выполнения обязанностей, предусмотренных законодательством.</li>
+                </ul>
+                
+                <p>5.2. Оператор обязан:</p>
+                <ul>
+                    <li>Предоставлять Пользователю информацию о его персональных данных;</li>
+                    <li>Предоставить ответ на запрос Пользователя в течение 30 дней с момента его поступления, если иное не предусмотрено законодательством РФ.</li>
+                    <li>Организовывать обработку персональных данных в соответствии с законодательством РФ;</li>
+                    <li>Защищать персональные данные от неправомерного доступа и утечек;</li>
+                    <li>Обеспечивать неограниченный доступ к настоящей Политике.</li>
+                </ul>
+                
+                <p>5.3. Пользователь имеет право:</p>
+                <ul>
+                    <li>Получать информацию о своих персональных данных;</li>
+                    <li>Требовать уточнения, блокирования или уничтожения своих персональных данных;</li>
+                    <li>Отзывать согласие на обработку персональных данных;</li>
+                    <li>Обжаловать действия Оператора в уполномоченные органы.</li>
+                </ul>
+                
+                <p>5.4. Пользователь обязан:</p>
+                <ul>
+                    <li>Предоставлять Оператору достоверные данные о себе.</li>
+                </ul>
+                
+                <h3>6. Порядок и условия обработки персональных данных</h3>
+                
+                <p>6.1. Оператор осуществляет следующие действия с персональными данными: сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передачу, обезличивание, блокирование, удаление, уничтожение персональных данных.</p>
+                
+                <p>6.2. Обработка персональных данных осуществляется смешанным способом без передачи по внутренней сети Оператора, с передачей по сети интернет.</p>
+                
+                <p>6.3. Оператор не осуществляет трансграничную передачу данных.</p>
+                
+                <p>6.4. Обработка персональных данных оператором ограничивается достижением конкретных, заранее определенных и законных целей, установленных настоящей политикой. Обработке подлежат только персональные данные, которые отвечают целям их обработки и указаны в настоящей политике. Содержание и объем обрабатываемых персональных данных должны соответствовать заявленным целям обработки.</p>
+                
+                <p>6.5. Источник получения персональных данных является Сайт.</p>
+                
+                <p>6.6. Местом хранения персональных данных является локальный компьютер Оператора.</p>
+                
+                <p>6.7. Условием прекращения обработки персональных данных является прекращения деятельности Оператора, а вместе с ним Сайта.</p>
+                
+                <p>6.8. Срок хранения персональных данных -- не более 10-ти лет с момента их получения Оператором.</p>
+                
+                <p>6.9. Передача персональных данных третьим лицам возможна в следующих случаях:</p>
+                <ul>
+                    <li>В целях исполнения договора между Оператором и Пользователем и/или Оператором и службой доставки (перевозчиком);</li>
+                    <li>Для соблюдения требований законодательства РФ.</li>
+                </ul>
+                
+                <p>6.10. Оператор и иные лица, получившие доступ к персональным данным, обязаны не раскрывать третьим лицам и не распространять персональные данные без согласия субъекта персональных данных.</p>
+                
+                <p>Передача (распространение, предоставление, доступ) персональных данных, разрешенных субъектом персональных данных для распространения, должна быть прекращена в любое время по требованию субъекта персональных данных. Данное требование должно включать в себя фамилию, имя, отчество (при наличии), контактную информацию (номер телефона, адрес электронной почты или почтовый адрес) субъекта персональных данных, а также перечень персональных данных, обработка которых подлежит прекращению. Указанные в данном требовании персональные данные могут обрабатываться только оператором, которому оно направлено.</p>
+                
+                <p>6.11. Оператор принимает следующие меры для обеспечения безопасности персональных данных:</p>
+                <ul>
+                    <li>назначение оператором, являющимся юридическим лицом, ответственного за организацию обработки персональных данных;</li>
+                    <li>издание оператором, являющимся юридическим лицом, документов, определяющих политику оператора в отношении обработки персональных данных;</li>
+                    <li>ознакомление работников оператора, непосредственно осуществляющих обработку персональных данных, с положениями законодательства Российской Федерации о персональных данных, в том числе требованиями к защите персональных данных, документами, определяющими политику оператора в отношении обработки персональных данных, локальными актами по вопросам обработки персональных данных, и (или) обучение указанных работников;</li>
+                    <li>установлением правил доступа к персональным данным, обрабатываемым в информационной системе персональных данных, а также обеспечением регистрации и учета всех действий, совершаемых с персональными данными в информационной системе персональных данных.</li>
+                </ul>
+                
+                <p>6.12. Оператором обеспечена безопасность персональных данных посредством наличия лицензионных программных средств защиты (антивирусов), наличия паролей на носителях ПД, двухфакторной аутентификации.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация EmailJS
+            emailjs.init("Dk_Rem253bOBpIW-n");
+            
+            // Основные элементы
+            const employeesInput = document.getElementById('employees-count');
+            const marketplaceInput = document.getElementById('marketplace-count');
+            const marketplaceSection = document.getElementById('marketplaceSection');
+            const totalPriceElement = document.getElementById('total-price');
+            const totalLabelElement = document.getElementById('total-label');
+            const totalSection = document.getElementById('total-section');
+            const totalCostInput = document.getElementById('total-cost');
+            const accountingProblems = document.getElementById('accountingProblems');
+            const problemDescription = document.getElementById('problemDescription');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const form = document.getElementById('calculatorForm');
+            const showContactBtn = document.getElementById('showContactBtn');
+            const contactSection = document.getElementById('contactSection');
+            const phoneInput = document.getElementById('phoneInput');
+            const documentsWorkGroup = document.getElementById('documentsWorkGroup');
+            
+            // Элементы для соглашений
+            const consent1 = document.getElementById('consent1');
+            const consent2 = document.getElementById('consent2');
+            const consent3 = document.getElementById('consent3');
+            
+            // Скрываем поля по умолчанию
+            problemDescription.style.display = 'none';
+            marketplaceSection.style.display = 'none';
+            contactSection.style.display = 'none';
+            
+            // Обработчик выбора проблем
+            accountingProblems.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    problemDescription.style.display = 'block';
+                } else {
+                    problemDescription.style.display = 'none';
+                    document.querySelector('textarea[name="problemDetails"]').value = '';
+                }
+                totalSection.classList.remove('visible');
+            });
+            
+            // Обработчик выбора маркетплейсов
+            document.querySelectorAll('input[name="marketplace"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'yes') {
+                        marketplaceSection.style.display = 'block';
+                    } else {
+                        marketplaceSection.style.display = 'none';
+                        marketplaceInput.value = '1';
+                    }
+                    totalSection.classList.remove('visible');
+                });
+            });
+            
+            // Кнопки изменения количества сотрудников
+            document.getElementById('employees-increment').addEventListener('click', () => {
+                employeesInput.value = parseInt(employeesInput.value) + 1;
+                totalSection.classList.remove('visible');
+            });
+            
+            document.getElementById('employees-decrement').addEventListener('click', () => {
+                const currentValue = parseInt(employeesInput.value);
+                if (currentValue > 0) {
+                    employeesInput.value = currentValue - 1;
+                    totalSection.classList.remove('visible');
+                }
+            });
+            
+            // Кнопки изменения количества маркетплейсов
+            document.getElementById('marketplace-increment').addEventListener('click', () => {
+                marketplaceInput.value = parseInt(marketplaceInput.value) + 1;
+                totalSection.classList.remove('visible');
+            });
+            
+            document.getElementById('marketplace-decrement').addEventListener('click', () => {
+                const currentValue = parseInt(marketplaceInput.value);
+                if (currentValue > 1) {
+                    marketplaceInput.value = currentValue - 1;
+                    totalSection.classList.remove('visible');
+                }
+            });
+            
+            // Обновление заголовка при изменении типа обслуживания
+            document.querySelectorAll('input[name="serviceType"]').forEach(radio => {
+                radio.addEventListener('change', updateTotalLabel);
+            });
+            
+            // Функция обновления заголовка
+            function updateTotalLabel() {
+                const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
+                totalLabelElement.textContent = serviceType === 'monthly' ? 
+                    'Стоимость бухгалтерского обслуживания за месяц:' : 
+                    'Стоимость бухгалтерского обслуживания за квартал:';
+            }
+            
+            // Проверка заполнения полей для расчета стоимости
+            function checkCalculationFields() {
+                let allFilled = true;
+                
+                // Сброс подсветки
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('unfilled');
+                });
+                
+                // Список полей для проверки расчета
+                const calculationFields = [
+                    'legalForm', 'serviceType', 'taxMode', 
+                    'employeesCount', 'documentsWork', 'marketplace',
+                    'monthlyTurnover', 'accountingProblems', 
+                    'tasksDescription', 'businessType'
+                ];
+                
+                // Проверка каждого поля
+                calculationFields.forEach(fieldName => {
+                    const field = form.elements[fieldName];
+                    if (field && field.required) {
+                        if (field.type === 'radio') {
+                            // Для радио-кнопок проверяем, что одна выбрана
+                            const selected = document.querySelector(`input[name="${fieldName}"]:checked`);
+                            if (!selected) {
+                                allFilled = false;
+                                
+                                // Находим родительский блок для подсветки
+                                let group;
+                                if (fieldName === 'documentsWork') {
+                                    group = documentsWorkGroup;
+                                } else {
+                                    group = document.querySelector(`input[name="${fieldName}"]`).closest('.form-group');
+                                }
+                                
+                                if (group) group.classList.add('unfilled');
+                            }
+                        } else if (!field.value.trim()) {
+                            allFilled = false;
+                            const group = field.closest('.form-group');
+                            if (group) group.classList.add('unfilled');
+                        }
+                    }
+                });
+                
+                // Проверка описания проблемы при выборе "Другая проблема"
+                if (accountingProblems.value === 'other') {
+                    const problemDetails = document.querySelector('textarea[name="problemDetails"]');
+                    if (!problemDetails.value.trim()) {
+                        allFilled = false;
+                        problemDescription.closest('.form-group').classList.add('unfilled');
+                    }
+                }
+                
+                // Проверка количества маркетплейсов при выборе "Да"
+                if (document.querySelector('input[name="marketplace"]:checked').value === 'yes') {
+                    if (!marketplaceInput.value.trim()) {
+                        allFilled = false;
+                        marketplaceSection.closest('.form-group').classList.add('unfilled');
+                    }
+                }
+                
+                return allFilled;
+            }
+            
+            // Проверка заполнения всех полей для отправки
+            function checkSubmitFields() {
+                let allFilled = true;
+                
+                // Сброс подсветки
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('unfilled');
+                });
+                
+                // Проверка всех полей формы
+                document.querySelectorAll('[required]').forEach(field => {
+                    if (field.type === 'radio') {
+                        // Для радио-кнопок проверяем, что одна выбрана
+                        const name = field.getAttribute('name');
+                        const selected = document.querySelector(`input[name="${name}"]:checked`);
+                        if (!selected) {
+                            allFilled = false;
+                            let group;
+                            if (name === 'documentsWork') {
+                                group = documentsWorkGroup;
+                            } else {
+                                group = field.closest('.form-group');
+                            }
+                            if (group) group.classList.add('unfilled');
+                        }
+                    } else if (!field.value.trim()) {
+                        allFilled = false;
+                        const group = field.closest('.form-group');
+                        if (group) group.classList.add('unfilled');
+                    }
+                });
+                
+                // Проверка описания проблемы при выборе "Другая проблема"
+                if (accountingProblems.value === 'other') {
+                    const problemDetails = document.querySelector('textarea[name="problemDetails"]');
+                    if (!problemDetails.value.trim()) {
+                        allFilled = false;
+                        problemDescription.closest('.form-group').classList.add('unfilled');
+                    }
+                }
+                
+                // Проверка количества маркетплейсов при выборе "Да"
+                if (document.querySelector('input[name="marketplace"]:checked').value === 'yes') {
+                    if (!marketplaceInput.value.trim()) {
+                        allFilled = false;
+                        marketplaceSection.closest('.form-group').classList.add('unfilled');
+                    }
+                }
+                
+                // Проверка согласий
+                if (!consent1.checked || !consent2.checked || !consent3.checked) {
+                    allFilled = false;
+                    document.querySelector('.consent-section').classList.add('unfilled');
+                }
+                
+                return allFilled;
+            }
+            
+            // Прокрутка к первому незаполненному полю
+            function scrollToFirstUnfilled() {
+                const firstUnfilled = document.querySelector('.unfilled');
+                if (firstUnfilled) {
+                    firstUnfilled.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }
+            }
+            
+            // Расчет стоимости
+            function calculateTotal() {
+                const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
+                const basePrice = serviceType === 'monthly' ? 5000 : 6000;
+                
+                // Расчет стоимости сотрудников
+                const employeesCount = parseInt(employeesInput.value) || 0;
+                const employeeRate = serviceType === 'monthly' ? 1000 : 3000;
+                const employeesCost = employeesCount * employeeRate;
+                
+                // Расчет стоимости документов
+                const documentsValue = document.querySelector('input[name="documentsWork"]:checked').value;
+                let documentsCost = 0;
+                
+                if (documentsValue !== '0') {
+                    if (documentsValue === '10') {
+                        documentsCost = serviceType === 'monthly' ? 1500 : 4000;
+                    } else if (documentsValue === '30') {
+                        documentsCost = serviceType === 'monthly' ? 4500 : 13500;
+                    } else if (documentsValue === '50') {
+                        documentsCost = serviceType === 'monthly' ? 7500 : 22000;
+                    }
+                }
+                
+                // Расчет стоимости правовой формы
+                const legalForm = document.querySelector('input[name="legalForm"]:checked').value;
+                const legalFormCost = legalForm === 'ooo' ? 2000 : 0;
+                
+                // Расчет стоимости маркетплейсов
+                let marketplaceCost = 0;
+                if (document.querySelector('input[name="marketplace"]:checked').value === 'yes') {
+                    const marketplaceCount = parseInt(marketplaceInput.value) || 1;
+                    // Первый маркетплейс бесплатный, за каждый следующий +1500 руб.
+                    if (marketplaceCount > 1) {
+                        marketplaceCost = (marketplaceCount - 1) * 1500;
+                    }
+                }
+                
+                // Итоговая стоимость
+                const totalCost = basePrice + employeesCost + documentsCost + legalFormCost + marketplaceCost;
+                totalPriceElement.textContent = totalCost.toLocaleString('ru-RU') + ' руб.';
+                totalCostInput.value = totalCost;
+                updateTotalLabel();
+                totalSection.classList.add('visible');
+            }
+            
+            // Обработчик кнопки расчета
+            calculateBtn.addEventListener('click', function() {
+                if (checkCalculationFields()) {
+                    calculateTotal();
+                    
+                    // Плавная прокрутка к результату
+                    setTimeout(() => {
+                        totalSection.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center'
+                        });
+                    }, 300);
+                } else {
+                    scrollToFirstUnfilled();
+                    alert('Пожалуйста, заполните все обязательные поля перед расчетом стоимости');
+                }
+            });
+            
+            // Обработчик кнопки "Оставить заявку"
+            showContactBtn.addEventListener('click', function() {
+                // Проверяем, был ли выполнен расчет
+                if (!totalSection.classList.contains('visible')) {
+                    alert('Пожалуйста, сначала произведите расчет стоимости');
+                    calculateBtn.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                
+                contactSection.style.display = 'block';
+                
+                // Прокрутка к контактной секции
+                setTimeout(() => {
+                    contactSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 100);
+            });
+            
+            // Маска ввода для телефона
+            phoneInput.addEventListener('input', function(e) {
+                let x = this.value.replace(/\D/g, '').substring(0, 11);
+                let formatted = '';
+                
+                // Добавляем +7 если его нет
+                if (x.length > 0) {
+                    formatted = '+7';
+                    
+                    if (x.length > 1) {
+                        // Добавляем пробел после +7
+                        formatted += ' ';
+                        
+                        // Добавляем остальные цифры с форматированием
+                        const rest = x.substring(1);
+                        if (rest.length > 0) {
+                            formatted += '(' + rest.substring(0, 3);
+                        }
+                        if (rest.length > 3) {
+                            formatted += ') ' + rest.substring(3, 6);
+                        }
+                        if (rest.length > 6) {
+                            formatted += '-' + rest.substring(6, 8);
+                        }
+                        if (rest.length > 8) {
+                            formatted += '-' + rest.substring(8, 10);
+                        }
+                    }
+                }
+                
+                this.value = formatted;
+            });
+            
+            phoneInput.addEventListener('keydown', function(e) {
+                // Разрешаем: backspace, delete, tab, escape, enter, стрелки
+                if ([46, 8, 9, 27, 13, 37, 38, 39, 40].includes(e.keyCode) ||
+                    // Разрешаем Ctrl+A
+                    (e.keyCode == 65 && e.ctrlKey === true) ||
+                    // Разрешаем Ctrl+C
+                    (e.keyCode == 67 && e.ctrlKey === true) ||
+                    // Разрешаем Ctrl+X
+                    (e.keyCode == 88 && e.ctrlKey === true) ||
+                    // Разрешаем home, end
+                    (e.keyCode >= 35 && e.keyCode <= 36)) {
+                    return;
+                }
+                
+                // Запрещаем все, кроме цифр
+                if ((e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+            
+            // При фокусе устанавливаем курсор в конец
+            phoneInput.addEventListener('focus', function() {
+                if (this.value === '') {
+                    this.value = '+7 ';
+                }
+                setTimeout(() => {
+                    this.setSelectionRange(this.value.length, this.value.length);
+                }, 0);
+            });
+            
+            // Обработчик отправки формы
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Проверка выполнения расчета
+                if (!totalSection.classList.contains('visible')) {
+                    alert('Пожалуйста, произведите расчет стоимости перед отправкой заявки');
+                    calculateBtn.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                
+                // Проверка заполнения полей
+                if (!checkSubmitFields()) {
+                    scrollToFirstUnfilled();
+                    alert('Пожалуйста, заполните все обязательные поля перед отправкой заявки');
+                    return;
+                }
+                
+                // Проверка телефона
+                const phonePattern = /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/;
+                if (!phonePattern.test(phoneInput.value)) {
+                    alert('Пожалуйста, введите корректный номер телефона');
+                    phoneInput.focus();
+                    return;
+                }
+                
+                // Генерация ID заявки
+                const requestId = 'REQ-' + Date.now().toString().slice(-6);
+                
+                // Форматирование даты
+                const now = new Date();
+                const formattedDate = now.toLocaleDateString('ru-RU', {
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+                
+                // Функция очистки данных
+                const cleanValue = (value) => {
+                    if (value === null || value === undefined) return '';
+                    return String(value)
+                        .replace(/[^\w\sа-яА-ЯёЁ.,!?@#$%^&*()_+=<>/\\|'"`~:;— -]/gu, '')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                };
+
+                // Получение значений формы
+                const getValue = (name) => cleanValue(form.elements[name].value);
+                const getRadioValue = (name) => {
+                    const selected = document.querySelector(`input[name="${name}"]:checked`);
+                    return selected ? cleanValue(selected.value) : '';
+                };
+                
+                // Подготовка параметров для EmailJS
+                const emailParams = {
+                    request_id: requestId,
+                    date: formattedDate,
+                    client_name: getValue('name'),
+                    client_phone: getValue('phone'),
+                    business_type: getValue('businessType'),
+                    legal_form: getRadioValue('legalForm') === 'ip' ? 'ИП' : 'ООО',
+                    marketplace: getRadioValue('marketplace') === 'yes' ? 'Да' : 'Нет',
+                    marketplace_count: getRadioValue('marketplace') === 'yes' ? getValue('marketplaceCount') : '0',
+                    service_type: getRadioValue('serviceType') === 'monthly' ? 
+                        'Ежемесячное обслуживание' : 'Ежеквартальное обслуживание',
+                    tax_mode: getRadioValue('taxMode') === 'usn' ? 'УСН (доходы)' : 'Патент',
+                    employees_count: getValue('employeesCount'),
+                    documents_volume: (() => {
+                        const val = getRadioValue('documentsWork');
+                        if (val === '0') return 'Нет работы с документами';
+                        if (val === '10') return 'До 10 документов в месяц';
+                        if (val === '30') return 'До 30 документов в месяц';
+                        if (val === '50') return 'До 50 документов в месяц';
+                        return '';
+                    })(),
+                    monthly_turnover: getValue('monthlyTurnover'),
+                    problems: (() => {
+                        const options = accountingProblems.options;
+                        return options[accountingProblems.selectedIndex]?.text || '';
+                    })(),
+                    problem_details: accountingProblems.value === 'other' ? 
+                        cleanValue(form.elements['problemDetails'].value) : '',
+                    tasks: getValue('tasksDescription'),
+                    total_cost: getValue('totalCost') + ' руб.'
+                };
+
+                // Изменение состояния кнопки
+                const submitBtn = document.querySelector('.submit-btn');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="loader"></span> Отправка...';
+                submitBtn.disabled = true;
+
+                // Отправка через EmailJS
+                emailjs.send('service_1fgu3go', 'template_fa4hsig', emailParams)
+                .then(function() {
+                    // Успешная отправка
+                    alert(`Заявка ${requestId} успешно отправлена!\n\nНаш бухгалтер свяжется с Вами в течение одного часа для уточнения деталей и подготовки коммерческого предложения.\n\nСпасибо за доверие!`);
+                    
+                    // Сброс формы
+                    form.reset();
+                    problemDescription.style.display = 'none';
+                    marketplaceSection.style.display = 'none';
+                    marketplaceInput.value = '1';
+                    totalSection.classList.remove('visible');
+                    employeesInput.value = '0';
+                    consent1.checked = false;
+                    consent2.checked = false;
+                    consent3.checked = false;
+                    contactSection.style.display = 'none';
+                    
+                    // Прокрутка к началу формы
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(function() {
+                    // Ошибка отправки
+                    alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону +7(988)-584-05-50');
+                })
+                .finally(function() {
+                    // Восстановление кнопки
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+            
+            // Инициализация заголовка стоимости
+            updateTotalLabel();
+            
+            // Обработчики для модальных окон
+            // Получаем все модальные окна и кнопки закрытия
+            const modals = document.querySelectorAll('.modal');
+            const closeButtons = document.querySelectorAll('.close');
+            const consentLinks = document.querySelectorAll('.consent-link');
+            
+            // Открытие модального окна
+            consentLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const modalId = this.getAttribute('data-modal');
+                    document.getElementById(modalId).style.display = 'block';
+                });
+            });
+            
+            // Закрытие модального окна при клике на крестик
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Закрытие модального окна при клике вне его
+            window.addEventListener('click', function(event) {
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Закрытие модального окна при нажатии клавиши Esc
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    modals.forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
